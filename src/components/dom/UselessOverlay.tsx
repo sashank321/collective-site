@@ -5,27 +5,48 @@ export function UselessOverlay() {
     const ref = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const unsub = useStore.subscribe(
-            (state) => {
-                const speed = state.scrollSpeed
-                if (!ref.current) return
+        let frameId: number
+        let time = 0
 
-                // Parallax/Fade logic based on scroll
-                // Ideally we'd map this to the Lenis scroll position, 
-                // but for now we can infer "start" state or simply let it cover the screen initially
+        const animate = () => {
+            time += 0.01
 
-                // Simple fade out on scroll
-                // We need actual scroll position, not just speed. 
-                // But since we are using Lenis in App.tsx, we can try to hook into that 
-                // or just let the CSS handle the initial state.
+            // Lissajous Drift (Frame 0)
+            // x = A sin(at)
+            // y = B sin(bt)
+            if (ref.current) {
+                // We add the drift to the transform
+                // BUT we also need to handle the scroll-based fade/ignition
+                const speed = useStore.getState().scrollSpeed
+                const opacity = Math.max(0, 1 - Math.min(speed * 30, 1))
 
-                // For this prototype, let's keep it static "USELESS" that fades when you start moving
-                const opacity = Math.max(0, 1 - Math.min(speed * 20, 1)) // Fade out on movement
+                // Drift calculation
+                const x = 20 * Math.sin(0.23 * time)
+                const y = 10 * Math.sin(0.37 * time)
+                const rot = Math.sin(time * 0.1) * 2 // degrees
+
+                // Ignition Effect (Frame 1)
+                // When speed increases, we scale up and blur
+                const scale = 1 + (speed * 20)
+                const blur = speed * 40
+
+                ref.current.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale})`
                 ref.current.style.opacity = opacity.toString()
-                ref.current.style.filter = `blur(${speed * 20}px)`
+                ref.current.style.filter = `blur(${blur}px)`
+
+                // Optional: Chromatic Aberration via text-shadow?
+                if (speed > 0.01) {
+                    ref.current.style.textShadow = `${speed * 10}px 0 red, -${speed * 10}px 0 blue`
+                } else {
+                    ref.current.style.textShadow = 'none'
+                }
             }
-        )
-        return () => unsub()
+
+            frameId = requestAnimationFrame(animate)
+        }
+
+        animate()
+        return () => cancelAnimationFrame(frameId)
     }, [])
 
     return (

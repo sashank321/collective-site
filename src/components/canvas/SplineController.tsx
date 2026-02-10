@@ -12,8 +12,9 @@ export function SplineController() {
     const curve = useMemo(() => {
         const pathPoints = [
             new THREE.Vector3(0, 0, 50),    // Pre-start
-            new THREE.Vector3(0, 0, 0),     // Start (Portal)
-            new THREE.Vector3(0, 0, -500),  // Deep Void
+            new THREE.Vector3(0, 0, 0),     // Point 0: Void
+            new THREE.Vector3(0, 0, -1000), // Point 1: Planet 1 (Arrival)
+            new THREE.Vector3(500, 200, -5000), // Point 2: Planet 2 (Transfer)
         ]
 
         // Massive Scale Planets

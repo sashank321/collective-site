@@ -101,10 +101,18 @@ function GeometricAstronaut({ floatOffset = 0 }) {
     )
 }
 
+import { Tether } from './Tether'
+
 export function AstronautContainer({ anchor }: { anchor: [number, number, number] }) {
+    const astroRef = useRef<THREE.Group>(null!)
+
     return (
         <group position={anchor}>
-            <GeometricAstronaut />
+            <group ref={astroRef}>
+                <GeometricAstronaut />
+            </group>
+            {/* Tether to a point "above" or "behind" relative to the container */}
+            <Tether start={astroRef} end={[10, 10, 20]} segments={10} />
         </group>
     )
 }
