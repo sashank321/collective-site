@@ -174,12 +174,12 @@ function App() {
           <fog attach="fog" args={['#000000', 10, 30]} />
 
           <SceneLighting />
-          <PortalText />
+          {/* <PortalText /> */}
           {/* <DeepSpace /> */}
           <WarpStars count={20000} />
           <WarpController />
 
-          <EffectComposer>
+          {/* <EffectComposer>
             <Bloom luminanceThreshold={1} mipmapBlur intensity={0.5} />
             <ChromaticAberration
               ref={chromaticRef}
@@ -189,7 +189,7 @@ function App() {
             <Noise opacity={0.05} />
           </EffectComposer>
 
-          <EffectsController chromaticRef={chromaticRef} />
+          <EffectsController chromaticRef={chromaticRef} /> */}
 
           <SplineController />
         </Canvas>
