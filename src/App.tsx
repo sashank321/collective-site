@@ -4,14 +4,14 @@ import { Canvas } from '@react-three/fiber'
 import Lenis from 'lenis'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-import { EffectComposer, ChromaticAberration, Bloom, Noise } from '@react-three/postprocessing'
-import { BlendFunction } from 'postprocessing'
+// import { EffectComposer, ChromaticAberration, Bloom, Noise } from '@react-three/postprocessing'
+// import { BlendFunction } from 'postprocessing'
 // import { DeepSpace } from './components/canvas/DeepSpace'
-import { PortalText } from './components/canvas/PortalText'
+// import { PortalText } from './components/canvas/PortalText'
 import { SceneLighting } from './components/canvas/SceneLighting'
 import { WarpStars } from './components/canvas/WarpStars'
 import { WarpController } from './components/canvas/WarpController'
-import { EffectsController } from './components/canvas/EffectsController'
+// import { EffectsController } from './components/canvas/EffectsController'
 import { SplineController } from './components/canvas/SplineController'
 import { Hero } from './components/dom/Hero'
 import { Collective } from './components/dom/Collective'
@@ -63,7 +63,7 @@ function VelocityBar() {
 }
 
 function App() {
-  const chromaticRef = useRef<any>(null)
+  // const chromaticRef = useRef<any>(null)
 
   useEffect(() => {
     // ==========================================
