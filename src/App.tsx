@@ -13,6 +13,7 @@ import { WarpStars } from './components/canvas/WarpStars'
 import { WarpController } from './components/canvas/WarpController'
 // import { EffectsController } from './components/canvas/EffectsController'
 import { SplineController } from './components/canvas/SplineController'
+import { PlanetarySystem } from './components/canvas/PlanetarySystem'
 import { Hero } from './components/dom/Hero'
 import { Collective } from './components/dom/Collective'
 import { Momentum } from './components/dom/Momentum'
@@ -194,6 +195,7 @@ function App() {
 
           <EffectsController chromaticRef={chromaticRef} /> */}
 
+          <PlanetarySystem />
           <SplineController />
         </Canvas>
       </div>

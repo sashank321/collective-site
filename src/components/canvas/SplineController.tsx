@@ -3,9 +3,9 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useStore } from '../../store/useStore'
 import { easing } from 'maath'
-import { Planet } from './Planet'
+// import { Planet } from './Planet'
 import { members } from '../../data/members'
-import { AstronautContainer } from './Astronaut'
+// import { AstronautContainer } from './Astronaut'
 
 export function SplineController() {
     // Blueprint 4.0: Catmull-Rom Spline
@@ -17,7 +17,7 @@ export function SplineController() {
         ]
 
         // Massive Scale Planets
-        members.forEach((_, i) => {
+        members.forEach((_: any, i: number) => {
             const z = -2000 - (i * 2000) // 2000 units spacing!
             const angle = i * 0.8
             // Large sweeping spiral
@@ -66,39 +66,5 @@ export function SplineController() {
         }
     })
 
-    return (
-        <group>
-            {/* Planets placed along the spline */}
-            {members.map((member, i) => {
-                // Calculate position same as curve generation
-                // Note: In production we'd bake this or share the math better.
-                const z = -2000 - (i * 2000)
-                const angle = i * 0.8
-                const radius = 400 + (i * 50)
-                const x = Math.sin(angle) * radius
-                const y = Math.cos(angle * 0.5) * (radius * 0.5)
-
-                // Offset planet to be "visitable" but not collided
-                const planetPos: [number, number, number] = [
-                    x + 100, // Offset 100 units
-                    y,
-                    z
-                ]
-
-                return (
-                    <group key={member.id}>
-                        <Planet
-                            position={planetPos}
-                            radius={80} // Massive! (Blueprint 1.2)
-                            color={member.color}
-                        />
-                        {/* Astronaut near the first planet (Architect) */}
-                        {i === 0 && (
-                            <AstronautContainer anchor={[planetPos[0] + 100, planetPos[1] + 20, planetPos[2] + 50]} />
-                        )}
-                    </group>
-                )
-            })}
-        </group>
-    )
+    return null
 }
