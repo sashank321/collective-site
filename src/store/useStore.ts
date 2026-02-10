@@ -1,36 +1,44 @@
 import { create } from 'zustand'
 
 interface AppState {
-    phase: 'entry' | 'collective' | 'detail' | 'dissolution'
-    setPhase: (phase: AppState['phase']) => void
+  phase: 'loading' | 'entry' | 'collective'
+  setPhase: (phase: 'loading' | 'entry' | 'collective') => void
 
-    hoveredNode: string | null
-    setHoveredNode: (id: string | null) => void
+  hoveredNode: string | null
+  setHoveredNode: (id: string | null) => void
 
-    cursorSpeed: number
-    setCursorSpeed: (speed: number) => void
+  cursorSpeed: number
+  setCursorSpeed: (speed: number) => void
 
-    scrollSpeed: number
-    setScrollSpeed: (speed: number) => void
+  scrollSpeed: number
+  setScrollSpeed: (speed: number) => void
 
-    // Physics params
-    attractionStrength: number
-    repulsionStrength: number
+  traversalState: 'launch' | 'orbit' | 'warp' | 'drift'
+  setTraversalState: (state: 'launch' | 'orbit' | 'warp' | 'drift') => void
+
+  traversalProgress: number
+  setTraversalProgress: (progress: number) => void
+
+  monolithPosition: [number, number]
 }
 
 export const useStore = create<AppState>((set) => ({
-    phase: 'entry',
-    setPhase: (phase) => set({ phase }),
+  phase: 'loading',
+  setPhase: (phase) => set({ phase }),
 
-    hoveredNode: null,
-    setHoveredNode: (id) => set({ hoveredNode: id }),
+  hoveredNode: null,
+  setHoveredNode: (id) => set({ hoveredNode: id }),
 
-    cursorSpeed: 0,
-    setCursorSpeed: (speed) => set({ cursorSpeed: speed }),
+  cursorSpeed: 0,
+  setCursorSpeed: (speed) => set({ cursorSpeed: speed }),
 
-    scrollSpeed: 0,
-    setScrollSpeed: (speed) => set({ scrollSpeed: speed }),
+  scrollSpeed: 0,
+  setScrollSpeed: (speed) => set({ scrollSpeed: speed }),
 
-    attractionStrength: 0.5,
-    repulsionStrength: 1.0,
+  traversalState: 'launch',
+  setTraversalState: (state) => set({ traversalState: state }),
+
+  traversalProgress: 0,
+  setTraversalProgress: (progress) => set({ traversalProgress: progress }),
+  monolithPosition: [0, 0]
 }))

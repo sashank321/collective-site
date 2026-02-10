@@ -1,67 +1,51 @@
-import { useRef, useLayoutEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react'
+import { useStore } from '../../store/useStore'
 
 export function Hero() {
-    const containerRef = useRef<HTMLDivElement>(null)
-    const titleRef = useRef<HTMLHeadingElement>(null)
+    const titleRef = useRef<HTMLHeadingElement>(null!)
 
-    useLayoutEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(titleRef.current, {
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: 'top top',
-                    end: 'bottom top',
-                    scrub: 1
-                },
-                scale: 1,
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)'
-            })
+    // Subscribe to Monolith position from store (updated in useFrame)
+    // format: [x, y] in Normalized Device Coordinates (-1 to 1)
+    // We need to convert this to pixels relative to center
+    // Wait, the projection gives us [-1, 1].
+    // CSS translate3d uses pixels.
+    // x = (ndc.x * 0.5 + 0.5) * window.innerWidth
+    // y = (-(ndc.y * 0.5) + 0.5) * window.innerHeight
 
-            gsap.to(titleRef.current, {
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: 'top top',
-                    end: 'bottom top',
-                    scrub: 1
-                },
-                scale: 3,
-                opacity: 0,
-                y: -200,
-                filter: 'blur(20px)'
-            })
-        }, containerRef)
+    // We use a selector to avoid re-renders on every frame? 
+    // No, React state updates will cause re-renders. 
+    // We need direct DOM manipulation for 60fps sync.
+    // But useStore.subscribe is better.
 
-        return () => ctx.revert()
-    }, [])
+    useStore.subscribe((state: any) => {
+        if (!titleRef.current || !state.monolithPosition) return
+
+        const [nx, ny] = state.monolithPosition
+
+        // Convert NDC to Pixel Coordinates
+        // center is (0,0) in CSS transform if we center the element
+        // But let's map it to window coordinates
+        // actually easier if the element is absolute centered and we just add offset
+
+        // NDC x range: -1 (left) to 1 (right)
+        // NDC y range: -1 (bottom) to 1 (top)
+
+        // Pixel offset from center:
+        const x = nx * (window.innerWidth * 0.5)
+        const y = -ny * (window.innerHeight * 0.5) // Invert Y for CSS
+
+        titleRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`
+    })
 
     return (
-        <section ref={containerRef} className="section" id="hero">
-            <div className="absolute-center">
-                <h1
-                    ref={titleRef}
-                    className="hero-title text-center"
-                    style={{
-                        fontSize: 'clamp(4rem, 20vw, 16rem)',
-                        fontWeight: 700,
-                        lineHeight: 0.85,
-                        letterSpacing: '-0.04em',
-                        mixBlendMode: 'exclusion'
-                    }}
-                >
-                    <span className="glitch" data-text="12">12</span>
-                </h1>
-            </div>
-            <div className="absolute-center" style={{ top: 'auto', bottom: '3rem' }}>
-                <p className="text-sm tracking-widest uppercase text-secondary animate-pulse" style={{ color: 'var(--text-secondary)' }}>
-                    Scroll to enter
-                </p>
-            </div>
+        <section className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none mix-blend-difference">
+            <h1
+                ref={titleRef}
+                className="text-[12vw] font-bold tracking-tighter text-white leading-none will-change-transform"
+                style={{ opacity: 0.9 }} // Initial distinct look
+            >
+                USELESS
+            </h1>
         </section>
     )
 }

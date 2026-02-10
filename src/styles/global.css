@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
   --accent-1: #ff6b6b;
   --accent-2: #4ecdc4;
   --accent-3: #ffe66d;
@@ -22,13 +22,16 @@
   box-sizing: border-box;
 }
 
+html {
+  background-color: #000000;
+}
+
 body {
   font-family: var(--font-main);
-  background: var(--bg-primary);
+  background-color: #000000;
   color: var(--text-primary);
   overflow-x: hidden;
   cursor: none;
-  /* Custom cursor handling */
   margin: 0;
   -webkit-font-smoothing: antialiased;
 }
@@ -66,9 +69,10 @@ body {
   background: rgba(78, 205, 196, 0.1);
 }
 
-/* Noise Overlay */
+/* Noise Overlay - Subtle texture */
 .noise {
-  position: fixed;
+  display: none;
+  /* Can enable if texture desired, but keeping pure black for now per request */
   top: 0;
   left: 0;
   width: 100%;
@@ -76,6 +80,7 @@ body {
   pointer-events: none;
   z-index: 9998;
   opacity: 0.03;
+  mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
@@ -104,149 +109,8 @@ body {
   text-transform: uppercase;
 }
 
-.tracking-wide {
-  letter-spacing: 0.2em;
-}
-
-.tracking-widest {
-  letter-spacing: 0.5em;
-}
-
-/* Glitch Effect */
-.glitch {
-  position: relative;
-  display: inline-block;
-}
-
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.8;
-}
-
-.glitch::before {
-  animation: glitch-1 2s infinite;
-  color: var(--accent-1);
-  z-index: -1;
-  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-  transform: translate(-2px, 2px);
-}
-
-.glitch::after {
-  animation: glitch-2 2s infinite;
-  color: var(--accent-4);
-  z-index: -2;
-  clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
-  transform: translate(2px, -2px);
-}
-
-@keyframes glitch-1 {
-
-  0%,
-  100% {
-    transform: translate(0);
-  }
-
-  20% {
-    transform: translate(-2px, 2px);
-  }
-
-  40% {
-    transform: translate(-2px, -2px);
-  }
-
-  60% {
-    transform: translate(2px, 2px);
-  }
-
-  80% {
-    transform: translate(2px, -2px);
-  }
-}
-
-@keyframes glitch-2 {
-
-  0%,
-  100% {
-    transform: translate(0);
-  }
-
-  20% {
-    transform: translate(2px, -2px);
-  }
-
-  40% {
-    transform: translate(2px, 2px);
-  }
-
-  60% {
-    transform: translate(-2px, -2px);
-  }
-
-  80% {
-    transform: translate(-2px, 2px);
-  }
-}
-
-/* Animations */
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scale(1.5);
-    opacity: 1;
-  }
-}
-
-@keyframes aura-rotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* Hide Scrollbar */
 ::-webkit-scrollbar {
   width: 0;
   background: transparent;
-}
-
-/* Physics / Momentum Section */
-.horizontal-section {
-  height: 400vh;
-  /* Scroll space for pinning */
-  position: relative;
-}
-
-.horizontal-wrapper {
-  height: 100vh;
-  overflow: hidden;
-  position: sticky;
-  top: 0;
-}
-
-.horizontal-track {
-  display: flex;
-  height: 100%;
-  will-change: transform;
-}
-
-.momentum-panel {
-  flex-shrink: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
 }

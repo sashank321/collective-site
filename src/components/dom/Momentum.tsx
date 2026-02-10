@@ -1,6 +1,8 @@
 import { useRef, useLayoutEffect } from 'react'
 import gsap from 'gsap'
-// import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const members = [
     { name: 'Aiden', color: '#ff6b6b', role: 'Architect', energy: 0.9 },
@@ -24,56 +26,89 @@ export function Momentum() {
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
             const track = trackRef.current
-            if (!track) return
+            const container = containerRef.current
+            if (!track || !container) return
 
-            const scrollWidth = track.scrollWidth
-            const winWidth = window.innerWidth
+            // 1. Horizontal Scroll Logic
+            const getScrollAmount = () => {
+                const trackWidth = track.scrollWidth
+                return -(trackWidth - window.innerWidth)
+            }
 
             gsap.to(track, {
-                x: -(scrollWidth - winWidth),
+                x: getScrollAmount,
                 ease: 'none',
                 scrollTrigger: {
-                    trigger: containerRef.current,
+                    trigger: container,
                     start: 'top top',
-                    end: () => `+=${scrollWidth - winWidth}`,
-                    scrub: 1,
+                    end: () => `+=${track.scrollWidth - window.innerWidth}`,
                     pin: true,
-                    anticipatePin: 1
+                    scrub: 1, // Inertial catch-up
+                    invalidateOnRefresh: true,
+                    anticipatePin: 1,
                 }
             })
+
+            // 2. Velocity Skew Effect
+            const proxy = { skew: 0 }
+            const skewSetter = gsap.quickSetter('.momentum-panel', 'skewX', 'deg')
+            const clamp = gsap.utils.clamp(-5, 5) // Gentle skew limit
+
+            ScrollTrigger.create({
+                trigger: container,
+                start: 'top top',
+                end: () => `+=${track.scrollWidth - window.innerWidth}`,
+                onUpdate: (self) => {
+                    const skew = clamp(self.getVelocity() / -500)
+                    // Only update if moving fast enough to matter
+                    if (Math.abs(skew) > Math.abs(proxy.skew)) {
+                        proxy.skew = skew
+                        gsap.to(proxy, {
+                            skew: 0,
+                            duration: 0.8,
+                            ease: 'power3.out',
+                            overwrite: true,
+                            onUpdate: () => skewSetter(proxy.skew)
+                        })
+                    }
+                }
+            })
+
         }, containerRef)
         return () => ctx.revert()
     }, [])
 
     return (
-        <section ref={containerRef} className="horizontal-section" id="momentum">
-            <div className="horizontal-wrapper">
-                <div ref={trackRef} className="horizontal-track">
+        <section ref={containerRef} className="horizontal-section relative h-screen overflow-hidden" id="momentum">
+            <div className="horizontal-wrapper h-full flex items-center">
+                <div ref={trackRef} className="horizontal-track flex gap-[5vw] px-[5vw] will-change-transform">
                     {members.map((member, i) => (
-                        <div key={member.name} className="momentum-panel">
-                            <div className="relative text-center group">
-                                <div className="w-48 h-48 md:w-64 md:h-64 rounded-full mx-auto mb-8 relative overflow-hidden transition-all duration-500 group-hover:scale-110">
-                                    <div className="absolute inset-0 opacity-60 transition-opacity group-hover:opacity-80"
-                                        style={{ background: `linear-gradient(135deg, ${member.color}66, transparent)` }} />
-                                    <div className="absolute inset-4 rounded-full bg-[#0a0a0f] flex items-center justify-center">
-                                        <span className="text-6xl md:text-8xl font-bold" style={{ color: member.color }}>
-                                            {i + 1}
-                                        </span>
-                                    </div>
-                                </div>
-                                <h3 className="text-4xl md:text-6xl font-bold mb-2 glitch" data-text={member.name}>
-                                    {member.name}
-                                </h3>
-                                <p className="text-lg tracking-widest uppercase" style={{ color: member.color }}>
-                                    {member.role}
-                                </p>
+                        <div key={member.name} className="momentum-panel flex-shrink-0 w-[40vw] md:w-[30vw] h-[60vh] relative perspective-1000">
+                            <div className="card-inner w-full h-full border border-white/10 rounded-2xl bg-black/40 backdrop-blur-md overflow-hidden relative group">
 
-                                {/* Energy Bars */}
-                                <div className="mt-8 flex justify-center gap-2">
-                                    {Array(5).fill(0).map((_, j) => (
-                                        <div key={j} className="w-1 h-8 rounded-full transition-all duration-300"
-                                            style={{ background: j < member.energy * 5 ? member.color : '#333' }} />
-                                    ))}
+                                {/* Background Gradient */}
+                                <div className="absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-40"
+                                    style={{ background: `linear-gradient(to bottom right, ${member.color}, transparent)` }} />
+
+                                {/* Content */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
+                                    <div className="w-32 h-32 mb-8 rounded-full border border-white/20 flex items-center justify-center relative">
+                                        <div className="absolute inset-2 rounded-full opacity-50" style={{ background: member.color }}></div>
+                                        <span className="relative z-10 text-4xl font-bold font-mono">{i + 1}</span>
+                                    </div>
+
+                                    <h3 className="text-5xl font-bold mb-2 text-white">{member.name}</h3>
+                                    <p className="text-sm uppercase tracking-widest text-gray-400 mb-8">{member.role}</p>
+
+                                    {/* Energy Visualization */}
+                                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                                        <div className="h-full transition-all duration-1000 ease-out"
+                                            style={{ width: `${member.energy * 100}%`, background: member.color }} />
+                                    </div>
+                                    <div className="mt-2 text-xs font-mono text-gray-500 flex justify-between w-full">
+                                        <span>ENERGY</span>
+                                        <span>{Math.round(member.energy * 100)}%</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
