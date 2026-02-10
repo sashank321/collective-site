@@ -6,6 +6,7 @@ export function WarpController() {
 
     useFrame((state) => {
         const progress = useStore.getState().traversalProgress
+        const vel = useStore.getState().scrollSpeed
         const camera = state.camera as THREE.PerspectiveCamera
 
         // Phase Logic (Thesis Section 3.1)
@@ -15,7 +16,6 @@ export function WarpController() {
 
         if (progress < 0.1) {
             // IDLE VOID
-            // Camera at stable Z=50
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, 50, 0.1)
             camera.fov = THREE.MathUtils.lerp(camera.fov, 45, 0.1)
         } else if (progress >= 0.1 && progress < 0.3) {
@@ -28,13 +28,13 @@ export function WarpController() {
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.1)
 
             // Widen FOV (45 -> 110)
-            const targetFOV = THREE.MathUtils.lerp(45, 110, warpP)
+            // PLUS Velocity impact: faster scroll = wider FOV (breathing effect)
+            const velocityFOV = Math.min(vel * 500, 20) // Cap effect
+            const targetFOV = THREE.MathUtils.lerp(45, 110, warpP) + velocityFOV
+
             camera.fov = THREE.MathUtils.lerp(camera.fov, targetFOV, 0.1)
         } else {
             // ARRIVAL (Reset for Solar System traversal)
-            // We might want to keep the FOV wide or reset it?
-            // Thesis says "Destination: Solar System". 
-            // Usually we stabilize FOV.
             camera.fov = THREE.MathUtils.lerp(camera.fov, 60, 0.05)
         }
 
