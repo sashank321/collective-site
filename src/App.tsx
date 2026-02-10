@@ -19,6 +19,8 @@ import { Momentum } from './components/dom/Momentum'
 import { Memory } from './components/dom/Memory'
 import { Contact } from './components/dom/Contact'
 // import { Loading } from './components/dom/Loading'
+import { Loader } from './components/ui/Loader'
+import { UselessOverlay } from './components/dom/UselessOverlay'
 import { Cursor } from './components/ui/Cursor'
 import { useStore } from './store/useStore'
 
@@ -152,7 +154,8 @@ function App() {
 
   return (
     <>
-      {/* <Loading /> */}
+      <Loader />
+      <UselessOverlay />
       <Cursor />
 
       <div id="webgl-canvas" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
