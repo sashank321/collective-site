@@ -4,14 +4,14 @@ import { Canvas } from '@react-three/fiber'
 import Lenis from 'lenis'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-// import { EffectComposer, ChromaticAberration, Bloom } from '@react-three/postprocessing'
-// import { BlendFunction } from 'postprocessing'
+import { EffectComposer, ChromaticAberration, Bloom, Noise } from '@react-three/postprocessing'
+import { BlendFunction } from 'postprocessing'
 // import { DeepSpace } from './components/canvas/DeepSpace'
 import { PortalText } from './components/canvas/PortalText'
 import { SceneLighting } from './components/canvas/SceneLighting'
 import { WarpStars } from './components/canvas/WarpStars'
 import { WarpController } from './components/canvas/WarpController'
-// import { EffectsController } from './components/canvas/EffectsController'
+import { EffectsController } from './components/canvas/EffectsController'
 import { SplineController } from './components/canvas/SplineController'
 import { Hero } from './components/dom/Hero'
 import { Collective } from './components/dom/Collective'
@@ -63,7 +63,7 @@ function VelocityBar() {
 }
 
 function App() {
-  // const chromaticRef = useRef<any>(null)
+  const chromaticRef = useRef<any>(null)
 
   useEffect(() => {
     // ==========================================
@@ -179,16 +179,17 @@ function App() {
           <WarpStars count={20000} />
           <WarpController />
 
-          {/* <EffectComposer>
+          <EffectComposer>
             <Bloom luminanceThreshold={1} mipmapBlur intensity={0.5} />
             <ChromaticAberration
               ref={chromaticRef}
               blendFunction={BlendFunction.NORMAL}
               offset={[0.002, 0.002]}
             />
+            <Noise opacity={0.05} />
           </EffectComposer>
 
-          <EffectsController chromaticRef={chromaticRef} /> */}
+          <EffectsController chromaticRef={chromaticRef} />
 
           <SplineController />
         </Canvas>
